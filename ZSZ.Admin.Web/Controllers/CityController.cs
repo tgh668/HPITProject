@@ -14,7 +14,7 @@ namespace ZSZ.Admin.Web.Controllers
         public ICityService CityService { get; set; } //声明一个接口对象
         public ActionResult Index()
         {
-            //调用cityService里面的GetAll方法
+              //调用cityService里面的GetAll方法
             //CityService = new CitySerivce(); //让IOC容器AutoFac帮你创建数据
             var list = CityService.GetAll();
             return Content(list.Length.ToString());//返回字符串

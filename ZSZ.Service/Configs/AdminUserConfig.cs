@@ -14,15 +14,11 @@ namespace ZSZ.DAL.ModelConfig
         {
             ToTable("T_AdminUsers");
 
-            //一般配置到“多”端，因为“一端”可能根本不知道“多端”的存在
-            //HasOptional(u => u.City).WithMany().HasForeignKey(u => u.CityId)
-            //    .WillCascadeOnDelete(false);
-
+            //配置用户和角色的多对多关系
             HasMany(u => u.Roles).WithMany(r => r.AdminUsers).Map(m=>m.ToTable("T_AdminUserRoles")
                 .MapLeftKey("AdminUserId").MapRightKey("RoleId"));
             Property(e => e.Name).HasMaxLength(50).IsRequired();
-            Property(e => e.Email).HasMaxLength(30).IsRequired().IsUnicode(false);//varchar(30)
-            Property(e => e.PhoneNum).HasMaxLength(20).IsRequired().IsUnicode(false);
+            Property(e => e.PhoneNum).HasMaxLength(20).IsRequired().IsUnicode(false);//对应数据库中的varchar类型
             Property(e => e.PasswordSalt).HasMaxLength(20).IsRequired().IsUnicode(false);
             Property(e => e.PasswordHash).HasMaxLength(100).IsRequired().IsUnicode(false);
         }

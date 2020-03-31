@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ZSZ.Service;
+using ZSZ.Service.Entities;
 
 namespace UnitTestProject1
 {
@@ -14,9 +15,9 @@ namespace UnitTestProject1
             //测试Ef的配置是否准确
             using (ZSZContext zsz=new ZSZContext())
             {
-                CityEntity city = new CityEntity();
-                city.Name = "洛阳";
-                zsz.Cities.Add(city);
+                TutorEntity city = new TutorEntity();
+                city.Name = "田果";
+                zsz.Tutors.Add(city);
                 zsz.SaveChanges();
             }
 

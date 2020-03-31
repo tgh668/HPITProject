@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IAdminLogin.cs" />
-    <Compile Include="ICityService.cs" />
     <Compile Include="IPremissionService.cs" />
     <Compile Include="IRoleService.cs" />
     <Compile Include="IServiceSupport.cs" />

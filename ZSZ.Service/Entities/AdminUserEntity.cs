@@ -13,14 +13,6 @@ namespace ZSZ.Service
         public string PhoneNum { get; set; }
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
-        public string Email { get; set; }
-        public long? CityId { get; set; }  //说明数据库这个列可以为空
-
-        public virtual CityEntity City { get; set; }
-
-        public int LoginErrorTimes { get; set; }
-        public DateTime? LastLoginErrorDateTime { get; set; }
-
         public virtual ICollection<RoleEntity> Roles { get; set; } = new List<RoleEntity>();
     }
 }

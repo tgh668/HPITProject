@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdminUserDTO.cs" />
     <Compile Include="BaseDTO.cs" />
     <Compile Include="CityDTO.cs" />
     <Compile Include="PermissionsDTO.cs" />

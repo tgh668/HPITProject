@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IAdminLogin.cs" />
+    <Compile Include="IAdminUserService.cs" />
     <Compile Include="IPremissionService.cs" />
     <Compile Include="IRoleService.cs" />
     <Compile Include="IServiceSupport.cs" />

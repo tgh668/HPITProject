@@ -13,7 +13,7 @@ namespace ZSZ.Admin.Web.Controllers
         // GET: Role
         public ActionResult Index()
         {
-            var list = RoleService.GetAll();
+            var list = RoleService.GetAllRoles();
             return View(list);
         }
     }

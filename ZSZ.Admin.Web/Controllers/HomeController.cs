@@ -32,7 +32,7 @@ namespace ZSZ.Admin.Web.Controllers
             //1:获取验证码文字
             var VerNum = CommonHelper.CreateVerifyCode(4);
             TempData["code"] = VerNum;//保存到Sesion里面，使用过一次后就自动清除，这就是TempData的用法
-            MemoryStream ms = ImageFactory.GenerateImage(VerNum, 60, 100, 20, 6);  //此处不能用using语法 验证码文字 高度；宽度； 字体大小；扭曲程度，数值越大扭曲越厉害
+            MemoryStream ms = ImageFactory.GenerateImage(VerNum, 40, 100, 12, -1);  //此处不能用using语法 验证码文字 高度；宽度； 字体大小；扭曲程度，数值越大扭曲越厉害
             return File(ms, "image/jpeg");
 
         }
@@ -50,19 +50,25 @@ namespace ZSZ.Admin.Web.Controllers
             //2:校验用户输入的验证码跟model里面的是否一致
             if (TempData["code"].ToString() != model.VerCode)
             {
-                return Json(new AjaxResult() { Status = "errorCode", ErrorMsg = "验证码不对" });
+                return Json(new AjaxResult() { Status = "error", ErrorMsg = "验证码不对" });
             }
             //3:根据用户名和密码做数据库的校验
             bool b = AdminLoginService.CheckLogin(model.Name, model.Pwd);
             if (b)
             {
-                return Json(new AjaxResult() { Status = "ok"});
+                return Json(new AjaxResult() { Status = "ok" });
             }
             else
             {
                 return Json(new AjaxResult() { Status = "no" });
             }
-           
+
+        }
+
+
+        public ActionResult MainIndex()
+        {
+            return View();
         }
     }
 }

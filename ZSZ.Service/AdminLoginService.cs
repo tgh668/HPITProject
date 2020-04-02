@@ -15,14 +15,14 @@ namespace ZSZ.Service
             using (ZSZContext db = new ZSZContext())
             {
                 BaseService<AdminUserEntity> admin = new BaseService<AdminUserEntity>(db);
-                var adminEnty = admin.GetAll().ToList().SingleOrDefault(m => m.PhoneNum == tele);
+                var adminEnty = admin.GetAll().SingleOrDefault(m => m.PhoneNum == tele);
                 if (adminEnty == null)
                 {
                     return false;
                 }
                 string salt = adminEnty.PasswordSalt;//密码盐
                                                      //将用户穿过来的密码和盐在一块加密，然后跟数据库的密码做对比，如果一致，就说明登录成功
-                var pwdJM = CommonHelper.CalcMD5(salt + pwd);//md5(盐+密码)
+                var pwdJM = CommonHelper.CalcMD5(pwd + salt);//md5(密码+盐)
                 return pwdJM == adminEnty.PasswordHash;
             }
         }

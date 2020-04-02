@@ -23,31 +23,30 @@
     <link href="~/lib/Hui-iconfont/1.0.1/iconfont.css" rel="stylesheet" type="text/css" />
 
     <link href="~/css/VlidForm.css" rel="stylesheet" />
-
+    <style type="text/css">
+        .col-5 {
+            width: 45.66667%;
+        }
+    </style>
     @*jquery的用法*@
     <script src="~/js/jquery.min.js"></script>
     <script src="~/lib/Validform/5.3.2/Validform.min.js"></script>
 
     <script type="text/javascript">
         $(function () {
-
             var validForm = $("#LoginForm").Validform({ tiptype: 2 });//客户端的验证
-
             //验证码
             $('#imgVerifyCode,#kanbuq').click(function () {
                 $('#imgVerifyCode').attr('src', '/home/GetVarCode?_=' + Math.random());
             });
-
             //鼠标变为小手
             $('#imgVerifyCode').mouseover(function () {
                 $(this).css('cursor', 'pointer');
             });
 
             $('#imgVerifyCode').click();
-
             //登录
             $('#loginBtn').click(function () {
-
                 if (validForm.check(false)) {
                     var dataForm = $('#LoginForm').serializeArray();//获取所有的表单数据
                     //往action里面发送AJAX请求
@@ -60,11 +59,9 @@
                             if (reg.Status == 'error') {
                                 alert(reg.ErrorMsg);
                             }
-                            else if (reg.Status == 'errorCode') {
-                                alert(reg.ErrorMsg);
-                            }
                             else if (reg.Status == 'ok') {
-                                alert('登录成功');
+                                //alert('登录成功');
+                                window.location.href = "/home/MainIndex";
                             }
                             else {
                                 alert('登录失败');
@@ -78,11 +75,6 @@
                         }
                     })
                 }
-
-
-
-
-
 
             });
 
@@ -107,18 +99,18 @@
             <form class="form form-horizontal" id="LoginForm">
                 <div class="row cl">
                     <label class="form-label col-3"><i class="Hui-iconfont">&#xe60d;</i></label>
-                    <div class="formControls col-8">
-                        @*<input id="" name="Name" type="text" placeholder="账户" class="input-text size-L">*@
-                        <input id="telePhone" name="Name" type="text" placeholder="电话号码" class="input-text size-L" datatype="s6-18" nullmsg="手机不能为空" errormsg="手机号码必须是11位">
+                    <div class="formControls col-5">
+
+                        <input id="telePhone" name="Name" type="text" placeholder="手机号码" class="input-text size-L" datatype="s6-18" nullmsg="手机号码不能为空" errormsg="手机号码必须是11位" style="width:280px">
 
                     </div>
                     <div class="col-xs-4"> </div>
                 </div>
                 <div class="row cl">
                     <label class="form-label col-3"><i class="Hui-iconfont">&#xe60e;</i></label>
-                    <div class="formControls col-8">
-                        @*<input id="" name="Pwd" type="password" placeholder="密码" class="input-text size-L">*@
-                        <input id="pwd" name="Pwd" type="password" placeholder="密码" class="input-text size-L" datatype="s6-18" nullmsg="密码不能为空" errormsg="密码必须是6位以上">
+                    <div class="formControls col-5">
+
+                        <input id="pwd" name="Pwd" type="password" placeholder="密码" class="input-text size-L" datatype="s6-18" nullmsg="密码不能为空" errormsg="密码必须是6位以上" style="width:280px">
                     </div>
                     <div class="col-xs-4"> </div>
                 </div>
@@ -128,14 +120,7 @@
                         <img id="imgVerifyCode" src="/home/GetVarCode"> <a id="kanbuq" href="javascript:;">看不清，换一张</a>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="formControls col-8 col-offset-3">
-                        <label for="online">
-                            <input type="checkbox" name="online" id="online" value="">
-                            使我保持登录状态
-                        </label>
-                    </div>
-                </div>
+               
                 <div class="row">
                     <div class="formControls col-8 col-offset-3">
                         <input name="" id="loginBtn" type="button" class="btn btn-success radius size-L" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;">

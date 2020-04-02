@@ -49,11 +49,10 @@
         @*分页*@
         @{
             var pager = new ZSZ.Web.Common.Pageing();
-            pager.CurrentPageClassName = "curPager";
             pager.MaxPagerCount = 10;
             pager.PageIndex = (int)ViewBag.pageIndex;//这些数据，cshtml不知道，就必须让Action传递给我们
             //对于所有cshtml要用到，但是又获取不到的数据，都由Action来获取，然后放到ViewBag或者Model中传递给cshtml
-            pager.PageSize = 3;
+            pager.PageSize = (int)ViewBag.pageSize;
             pager.TotalCount = (int)ViewBag.total;
             pager.UrlPattern = "/AdminUser/List?pageIndex={pn}";
         }

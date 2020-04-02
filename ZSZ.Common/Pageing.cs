@@ -45,33 +45,39 @@ namespace ZSZ.Web.Common
         {
             StringBuilder html = new StringBuilder();
             html.Append("<div  class='layui-box layui-laypage layui-laypage-default'>");
-
             //ToDO：加上上一页、下一页、首页、末页、页面跳转等。
-
-
             //总页数
             int pageCount = (int)Math.Ceiling(TotalCount * 1.0 / PageSize);
             //显示出来的页码的起始页码
             int startPageIndex = Math.Max(1, PageIndex - MaxPagerCount / 2);
             //显示出来的页码的结束页码
             int endPageIndex = Math.Min(pageCount, startPageIndex + MaxPagerCount);
+            string href = "";
+            //上一页
+            href = UrlPattern.Replace("{pn}", (PageIndex - 1) == 0 ? "1" : (PageIndex - 1).ToString());
+            html.Append("<a href='").Append(href).Append("' class='layui-laypage-prev'>")
+                       .Append("上一页").Append("</a>");
             for (int i = startPageIndex; i <= endPageIndex; i++)
             {
-
                 //是当前页
                 if (i == PageIndex)
                 {
                     html.Append("<span class='layui-laypage-curr'><em class='layui-laypage-em'></em><em>")
                         .Append(i).Append("</em></span>");
-
+                   
                 }
                 else
                 {
-                    string href = UrlPattern.Replace("{pn}", i.ToString());
+                    href = UrlPattern.Replace("{pn}", i.ToString());
                     html.Append("<a href='").Append(href).Append("'>")
                         .Append(i).Append("</a>");
                 }
-            }          
+            }
+            //下一页
+            href = UrlPattern.Replace("{pn}", (PageIndex + 1) >= endPageIndex ? endPageIndex.ToString() : (PageIndex + 1).ToString());
+            html.Append("<a href='").Append(href).Append("' class='layui-laypage-next'>")
+                       .Append("下一页").Append("</a>");
+
 
             html.Append("</div>");
             return html.ToString();

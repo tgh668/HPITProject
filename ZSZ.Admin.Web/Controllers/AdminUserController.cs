@@ -17,10 +17,11 @@ namespace ZSZ.Admin.Web.Controllers
         public IRoleService RoleService { get; set; }
         public ActionResult List(int pageIndex = 1)
         {
-            var admins = AdminUserService.GetAllAdmin(3, (pageIndex - 1) * 3);
+            var admins = AdminUserService.GetAllAdmin(10, (pageIndex - 1) * 10);
             var totals = AdminUserService.GetTotalCount();
             ViewBag.pageIndex = pageIndex;
             ViewBag.total = totals;
+            ViewBag.pageSize = 10;
             return View(admins);
         }
 

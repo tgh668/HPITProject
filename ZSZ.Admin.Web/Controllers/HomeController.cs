@@ -15,6 +15,7 @@ namespace ZSZ.Admin.Web.Controllers
     public class HomeController : Controller
     {
         public IAdminLogin AdminLoginService { get; set; }
+        public IAdminUserService AdminUserService { get; set; }
         // GET: Home
         [HttpGet]
         public ActionResult Login()
@@ -56,6 +57,7 @@ namespace ZSZ.Admin.Web.Controllers
             bool b = AdminLoginService.CheckLogin(model.Name, model.Pwd);
             if (b)
             {
+                Session["LoginID"] = AdminUserService.GetAdminByPhone(model.Name).Id;
                 return Json(new AjaxResult() { Status = "ok" });
             }
             else

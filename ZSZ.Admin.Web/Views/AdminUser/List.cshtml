@@ -7,7 +7,7 @@
 <div class="pd-20">
     <form id="AdminForm" class="Huiform" target="_self">
         <div class="text-c">
-            <input type="text" class="input-text" style="width:250px" placeholder="用户名称" id="" name="">
+            <input type="text" class="input-text" style="width:250px" placeholder="输入关键字" value="@ViewBag.keywords" name="keyWords" autocomplete="off">
             <button type="submit" class="btn btn-success" id="" name=""><i class="Hui-iconfont">&#xe665;</i> 搜索用户</button>
         </div>
         <div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="l"><a href="javascript:;" onclick="datadel()" class="btn btn-danger radius"><i class="Hui-iconfont">&#xe6e2;</i> 批量删除</a> <a href="javascript:;" onclick="admin_add('添加用户','/AdminUser/AddAdmin','800','400')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加用户</a></span> <span class="r">共有数据：<strong>@Model.Length</strong> 条</span> </div>
@@ -33,7 +33,7 @@
                             <td>@Model[i].Name</td>
                             <td>@Model[i].PhoneNum</td>
                             <td>
-                                <a title="编辑" href="javascript:;" onclick="admin_edit('用户编辑','/AdminUser/EditAdmin/@Model[i].Id',1,'','500')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+                                <a title="编辑" href="javascript:;" onclick="admin_edit('用户编辑','/AdminUser/EditAdmin/@Model[i].Id',1,'800','400')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
                                 <a title="删除" href="javascript:;" onclick="admin_del(this,@Model[i].Id)" class="ml-5" style="text-decoration:none">
                                     @*<a title="删除" href="~/Permission/Dele2?id=@Model[i].Id" class="ml-5" style="text-decoration:none">*@
                                     <i class="Hui-iconfont">&#xe6e2;</i>
@@ -49,15 +49,22 @@
         @*分页*@
         @{
             var pager = new ZSZ.Web.Common.Pageing();
-            pager.MaxPagerCount = 10;
+            pager.MaxPagerCount = 8;
             pager.PageIndex = (int)ViewBag.pageIndex;//这些数据，cshtml不知道，就必须让Action传递给我们
             //对于所有cshtml要用到，但是又获取不到的数据，都由Action来获取，然后放到ViewBag或者Model中传递给cshtml
             pager.PageSize = (int)ViewBag.pageSize;
             pager.TotalCount = (int)ViewBag.total;
-            pager.UrlPattern = "/AdminUser/List?pageIndex={pn}";
+            pager.UrlPattern = "/AdminUser/List?pageIndex={pn}&keyWords=" + ViewBag.keywords;
+        }
+        @if (Model.Length == 0)
+        {
+            <span style="margin-top:10px;color:red">暂无数据</span>
+        }
+        else
+        {
+            @Html.Raw(pager.GetPagerHtml())
         }
 
-        @Html.Raw(pager.GetPagerHtml())
 
     </form>
 </div>
@@ -83,7 +90,7 @@
 
         /*管理员-权限-删除*/
         function admin_del(obj, id) {
-            layer.confirm('用户删除须谨慎，确认要删除吗？', function (index) {
+            layer.confirm('确认要删除吗？', function (index) {
                 //利用Ajax进行删除操作
                 $.ajax({
                     url: '/AdminUser/DeleAdmin',
@@ -100,7 +107,7 @@
                             layer.msg('不能删除自己，您没有这个权限!', { icon: 2, time: 2000 });
                         }
                         else {
-                            layer.msg('删除失败!', { icon: 2, time: 000 });
+                            layer.msg('删除失败!', { icon: 2, time: 1000 });
                         }
                     },
                     error: function () {

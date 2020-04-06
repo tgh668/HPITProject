@@ -59,24 +59,24 @@ namespace ZSZ.Service
         {
             using (ZSZContext zsz = new ZSZContext())
             {
-                //BaseService<AdminUserEntity> bsAdmin = new BaseService<AdminUserEntity>(zsz);
-                ////bsAdmin.GetAll().AsNoTracking().Where(m => m.PhoneNum == phone).ToList().Select(m => ToDTO(m));
-                //var users = bsAdmin.GetAll().Include(u => u.City).AsNoTracking().Where(m => m.PhoneNum == phone);
-                //int count = users.Count();
-                //if (count <= 0)
-                //{
-                //    return null;
-                //}
-                //else if (count == 1)
-                //{
-                //    return ToDTO(users.Single());
-                //}
-                //else
-                //{
-                //    throw new ApplicationException("找到多个手机号为" + phone + "的管理员");
-                //}
+                BaseService<AdminUserEntity> bsAdmin = new BaseService<AdminUserEntity>(zsz);
+                //bsAdmin.GetAll().AsNoTracking().Where(m => m.PhoneNum == phone).ToList().Select(m => ToDTO(m));
+                var users = bsAdmin.GetAll().AsNoTracking().Where(m => m.PhoneNum == phone);
+                int count = users.Count();
+                if (count <= 0)
+                {
+                    return null;
+                }
+                else if (count == 1)
+                {
+                    return ToDTO(users.Single());
+                }
+                else
+                {
+                    throw new ApplicationException("找到多个手机号为" + phone + "的管理员");
+                }
 
-                return null;
+
             }
         }
 
@@ -84,26 +84,32 @@ namespace ZSZ.Service
         {
             using (ZSZContext context = new ZSZContext())
             {
-                //BaseService<AdminUserEntity> adbs = new BaseService<AdminUserEntity>(context);
-                ////return ToDTO(adbs.GetById(adminId));//这样写就不能用Include
-                ////adbs.GetAll().Include(m => m.City).AsNoTracking().Where(n => n.Id == adminId).SingleOrDefault();
-                //var admin = adbs.GetAll().Include(m => m.City).AsNoTracking().SingleOrDefault(m => m.Id == adminId);
-                //if (admin == null)
-                //{
-                //    return null;
-                //}
-                //return ToDTO(admin);
+                BaseService<AdminUserEntity> adbs = new BaseService<AdminUserEntity>(context);
+                var admin = adbs.GetById(adminId);
+                if (admin == null)
+                {
+                    return null;
+                }
+                return ToDTO(admin);
 
-                return null;
+
             }
         }
 
-        public AdminUserDTO[] GetAllAdmin(int pageSize, int currentIndex)
+        public AdminUserDTO[] GetAllAdmin(int pageSize, int currentIndex, string keyWords)
         {
             using (ZSZContext context = new ZSZContext())
             {
                 BaseService<AdminUserEntity> adbs = new BaseService<AdminUserEntity>(context);
-                return adbs.GetAll().AsNoTracking().OrderByDescending(m => m.CreateDateTime).Skip(currentIndex).Take(pageSize).ToList().Select(u => ToDTO(u)).ToArray();
+                var items = adbs.GetAll();
+                if (!string.IsNullOrEmpty(keyWords))
+                {
+                    items = items.Where(e => e.Name.Contains(keyWords) || e.PhoneNum.Contains(keyWords));
+                }
+
+                return items.AsNoTracking().OrderByDescending(m => m.CreateDateTime).Skip(currentIndex).Take(pageSize).ToList().Select(u => ToDTO(u)).ToArray();
+
+
             }
         }
 
@@ -126,11 +132,16 @@ namespace ZSZ.Service
             }
         }
 
-        public long GetTotalCount()
+        public long GetTotalCount(string keyWords)
         {
             using (ZSZContext zsz = new ZSZContext())
             {
                 BaseService<AdminUserEntity> bsAdmin = new BaseService<AdminUserEntity>(zsz);
+                if (!string.IsNullOrEmpty(keyWords))
+                {
+                    var list = bsAdmin.GetAll().Where(e => e.Name.Contains(keyWords) || e.PhoneNum.Contains(keyWords));
+                    return list.LongCount();
+                }
                 return bsAdmin.GetTotalCount();
             }
         }
@@ -172,7 +183,7 @@ namespace ZSZ.Service
 
         public AdminUserDTO IsExitTelePhone(string telPhone)
         {
-           
+
             using (ZSZContext ctx = new ZSZContext())
             {
                 BaseService<AdminUserEntity> bs
@@ -195,7 +206,7 @@ namespace ZSZ.Service
             }
         }
 
-        public void UpdateAdminUser(long id, string name, string phoneNum, string password, string email, long? cityId)
+        public void UpdateAdminUser(long id, string name, string phoneNum, string password)
         {
             using (ZSZContext ct = new ZSZContext())
             {
@@ -210,10 +221,9 @@ namespace ZSZ.Service
                 admin.PhoneNum = phoneNum;
                 if (!string.IsNullOrEmpty(password))
                 {
-                    admin.PasswordHash = CommonHelper.CalcMD5(admin.PasswordSalt + password);
+                    admin.PasswordHash = CommonHelper.CalcMD5(password + admin.PasswordSalt);
                 }
-                //admin.Email = email;
-                //admin.CityId = cityId;
+
                 ct.SaveChanges();
             }
         }

@@ -73,7 +73,7 @@ namespace ZSZ.Service
                 {
                     throw new Exception("不存在id为" + adminUserId + "的用户");
                 }
-                return admin.Roles.ToList().Select(m => ToDTO(m)).ToArray();
+                return admin.Roles.Select(m => ToDTO(m)).ToArray();
             }
         }
 

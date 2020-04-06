@@ -1,0 +1,113 @@
+﻿@model ZSZ.Admin.Web.Models.EditAdminGet
+@{
+    ViewBag.Title = "AddAdmin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="pd-20">
+    <form class="form form-horizontal" id="form-admin-edit">
+        <input type="hidden" name="Id" value="@Model.AdminDTO.Id" />
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>手机：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="@Model.AdminDTO.PhoneNum" placeholder="" id="PhoneNum" name="PhoneNum" datatype="m" nullmsg="手机不能为空">
+            </div>
+            <div class="col-4"> </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>管理员：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="@Model.AdminDTO.Name" placeholder="" id="Name" name="Name" datatype="*2-16" nullmsg="用户名不能为空">
+            </div>
+            <div class="col-4"> </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>初始密码：</label>
+            <div class="formControls col-5">
+                <input type="password" placeholder="留空则为不修改密码" value="" class="input-text" datatype="*0-10" name="Pwd">
+            </div>
+            <div class="col-4"> </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>确认密码：</label>
+            <div class="formControls col-5">
+                <input type="password" placeholder="留空则为不修改密码" datatype="*0-10" class="input-text " errormsg="您两次输入的密码不一致！" recheck="Pwd" id="PwdCheck" name="PwdCheck">
+            </div>
+            <div class="col-4"> </div>
+        </div>       
+        
+        <div class="row cl">
+            <label class="form-label col-3">角色：</label>
+            @foreach (var role in Model.RoleDTO)
+            {
+                <div class="col-xs-12 col-sm-3">
+                    <input type="checkbox" id="roles_@role.Id" name="RoleIds" value="@role.Id" checked="@Model.HasRoleIds.Contains(role.Id)">
+                    <label for="roles_@role.Id">@role.Name</label>
+                </div>
+            }
+            <div class="col-4"> </div>
+        </div>
+        <div class="row cl">
+            <div class="col-9 col-offset-3">
+                <input class="btn btn-primary radius" id="btn" type="button" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+
+@section footScript{
+    <script type="text/javascript">
+        //表单提交的写法，action里面可以什么都不写，默认会找相应的方法处理
+        $(function () {
+            var validForm = $("#form-admin-edit").Validform({ tiptype: 2, });
+            $('#btn').click(function () {
+                var dataFrom = $("#form-admin-edit").serializeArray();
+                if (validForm.check(false)) {
+                    $.ajax({
+                        url: '/AdminUser/EditAdmin',
+                        type: 'post',
+                        data: dataFrom,
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.Status == 'ok') {
+                                //layer.msg('添加成功', { icon: 1, time: 1000 });
+                                window.parent.location.reload(); //刷新父页面，光客户端校验不行，加上服务端校验
+                            }
+                            else {
+                                layer.msg('两次密码不一致', { icon: 2, time: 1000 });
+                            }
+
+                        },
+                        error: function (data) {
+                            layer.msg('服务器异常' + data.ErrorMsg, { icon: 2, time: 1000 });
+                        }
+                    })
+                }
+
+            })
+
+            //手机号码文本框失去焦点时候检测是否被注册过
+            $('#PhoneNum').blur(function () {
+                if ($('#PhoneNum').val().length > 0) {
+                    $.ajax({
+                        url: '/AdminUser/CheckPhoneExist',
+                        data: { 'phone': $('#PhoneNum').val(),'adminID':@Model.AdminDTO.Id },
+                        type: 'post',
+                        dataType: 'json',
+                        success: function (data) {
+                            if (data.Status == 'Exist') {
+                                layer.msg('该手机号码已被注册！', { icon: 2, time: 2000 });
+                            }
+                        },
+                        error: function () {
+
+                        }
+                    })
+                }
+
+            })
+        })
+
+    </script>
+
+}

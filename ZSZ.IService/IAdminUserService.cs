@@ -14,7 +14,7 @@ namespace ZSZ.IService
         /// 获取所有的管理员信息
         /// </summary>
         /// <returns></returns>
-        AdminUserDTO[] GetAllAdmin(int pageSize, int currentIndex);
+        AdminUserDTO[] GetAllAdmin(int pageSize, int currentIndex,string keyWords);
         /// <summary>
         /// 删除用户
         /// </summary>
@@ -53,7 +53,7 @@ namespace ZSZ.IService
         /// <param name="password"></param>
         /// <param name="email"></param>
         /// <param name="cityId"></param>
-        void UpdateAdminUser(long id, string name, string phoneNum, String password, string email, long? cityId);
+        void UpdateAdminUser(long id, string name, string phoneNum, String password);
         /// <summary>
         /// 检验用户是否登录成功
         /// </summary>
@@ -79,6 +79,6 @@ namespace ZSZ.IService
         //根据id获取DTO
         AdminUserDTO GetById(long id);
 
-        long GetTotalCount();
+        long GetTotalCount(string keyWords);
     }
 }

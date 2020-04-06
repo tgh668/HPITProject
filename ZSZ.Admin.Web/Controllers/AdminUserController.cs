@@ -17,11 +17,13 @@ namespace ZSZ.Admin.Web.Controllers
         public IRoleService RoleService { get; set; }
         public ActionResult List(int pageIndex = 1)
         {
-            var admins = AdminUserService.GetAllAdmin(10, (pageIndex - 1) * 10);
-            var totals = AdminUserService.GetTotalCount();
+            string keyWords = Request["keyWords"] == null ? "" : Request["keyWords"].ToString();
+            var admins = AdminUserService.GetAllAdmin(8, (pageIndex - 1) * 8,keyWords);
+            var totals = AdminUserService.GetTotalCount(keyWords);
             ViewBag.pageIndex = pageIndex;
             ViewBag.total = totals;
-            ViewBag.pageSize = 10;
+            ViewBag.pageSize = 8;
+            ViewBag.keywords = keyWords;
             return View(admins);
         }
 
@@ -42,7 +44,7 @@ namespace ZSZ.Admin.Web.Controllers
                 AdminUserDTO userModel = AdminUserService.IsExitTelePhone(model.PhoneNum);
                 if (userModel == null)
                 {
-                    long adminUserID = AdminUserService.AddAdminUser(model.Name, model.PhoneNum, model.Pwd);//添加用户,注意此处的cityId，总部为null
+                    long adminUserID = AdminUserService.AddAdminUser(model.Name, model.PhoneNum, model.Pwd);
                     RoleService.AddRoleIds(adminUserID, model.RoleIds);//添加用户角色的对应关系，此处应该启用事物
                     return Json(new AjaxResult() { Status = "ok" });
                 }
@@ -83,5 +85,86 @@ namespace ZSZ.Admin.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult EditAdmin(long id)
+        {
+            //1:根据用户id获取用户信息
+            var adminModel = AdminUserService.GetAdminInfo(id);
+            if (adminModel == null)
+            {
+                //不要忘了第二个参数的(object) 
+                //如果视图在当前文件夹下没有找到，则去Shared下去找
+                //一个Error视图，大家共用
+                return View("Error", (object)"指定的用户不存在");
+            }
+            //3:获取所有的角色信息，并选中当前的角色
+            var roles = RoleService.GetAllRoles();//获取所有的角色信息
+            var rolesHave = RoleService.GetByAdminUserId(id);//用户拥有的角色信息
+            EditAdminGet edit = new EditAdminGet { AdminDTO = adminModel, HasRoleIds = rolesHave.Select(m => m.Id).ToArray(), RoleDTO = roles };
+            return View(edit);
+        }
+        [HttpPost]
+        public ActionResult EditAdmin(EditAdminPost editModel)
+        {
+            //更新用户表
+            //更新用户角色表
+            if (ModelState.IsValid)
+            {
+                //如果密码什么都没写，则不更新密码，否则就更新密码
+                //注意此处的细节，前端如果密码都没填写，那么可以向后端发请求（留空不修改密码），如果前端的密码和确认密码不一致，那么就不能往后端发请求，前端注意这个细节！
+                AdminUserService.UpdateAdminUser(editModel.Id, editModel.Name, editModel.PhoneNum, editModel.Pwd);
+                //更新用户角色关系表...
+                RoleService.UpdateRoleIds(editModel.Id, editModel.RoleIds);
+                return Json(new AjaxResult() { Status = "ok" });
+            }
+            else
+            {
+                string errorMsg = CommonHelper.GetValidMsg(ModelState);//验证具体的错误信息
+                return Json(new AjaxResult() { Status = "no", ErrorMsg = errorMsg });
+            }
+
+        }
+
+        public ActionResult DeleAdmin(long id)
+        {
+            long? userId = LoginHelper.GetUserId(HttpContext);//获取session
+            if (id == userId.Value)
+            {
+                return Json(new AjaxResult() { Status = "warn" });
+            }
+            bool b = AdminUserService.DeleteAdmin(id);
+            if (b)
+            {
+                return Json(new AjaxResult() { Status = "ok" });
+            }
+            else
+            {
+                return Json(new AjaxResult() { Status = "no" });
+            }
+
+        }
+
+        public ActionResult BatchDele(long[] selectRoleIDs)
+        {
+            long? userId = LoginHelper.GetUserId(HttpContext);//获取当前登录的用户，他不能自己删除自己
+            if (selectRoleIDs.Contains(userId.Value))
+            {
+                return Json(new AjaxResult() { Status = "warn" });
+            }
+            if (selectRoleIDs != null)
+            {
+                for (int i = 0; i < selectRoleIDs.Length; i++)
+                {
+                    AdminUserService.DeleteAdmin(selectRoleIDs[i]);
+                }
+
+                return Json(new AjaxResult() { Status = "ok" });
+            }
+            else
+            {
+                return Json(new AjaxResult() { Status = "no" });
+            }
+
+        }
     }
 }

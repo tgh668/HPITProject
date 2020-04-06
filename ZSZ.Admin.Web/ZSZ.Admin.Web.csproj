@@ -1384,7 +1384,10 @@
     <Compile Include="lib\ueditor\1.4.3\net\App_Code\NotSupportedHandler.cs" />
     <Compile Include="lib\ueditor\1.4.3\net\App_Code\PathFormater.cs" />
     <Compile Include="lib\ueditor\1.4.3\net\App_Code\UploadHandler.cs" />
+    <Compile Include="LoginHelper.cs" />
     <Compile Include="Models\AddAdminModel.cs" />
+    <Compile Include="Models\EditAdminGet.cs" />
+    <Compile Include="Models\EditAdminPost.cs" />
     <Compile Include="Models\EditPermission.cs" />
     <Compile Include="Models\LoginModel.cs" />
     <Compile Include="Models\PermissionAdd.cs" />
@@ -1491,6 +1494,8 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\AdminUser\List.cshtml" />
     <Content Include="Views\AdminUser\AddAdmin.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\AdminUser\EditAdmin.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
